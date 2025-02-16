@@ -1,0 +1,23 @@
+{
+    "database": {
+        "host": "localhost",
+        "port": 3306,
+        "name": "calendar_feeds",
+        "user": "calendar_user",
+        "password": "your_secure_password"
+    },
+    "feed": {
+        "default_timezone": "Europe/Berlin",
+        "max_hours": 8760,
+        "base_url": "https://example.com/feed.php"
+    },
+    "calendar_discovery": {
+        "unused_key_expiry_minutes": 1440,
+        "discovery_window_minutes": 1440
+    },
+    "caldav": {
+        "base_url": "http://127.0.0.1:7000",
+        "username": "admin",
+        "password": "admin"
+    }
+}
