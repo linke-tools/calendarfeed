@@ -1,6 +1,6 @@
 <?php
 
-function jcal_to_rss($urls, $timezone = 'Europe/Berlin') {
+function jcal_to_rss($urls, $timezone = 'Europe/Berlin', $feed_url = '') {
     if (!is_array($urls)) {
         $urls = [$urls];
     }
@@ -21,23 +21,19 @@ function jcal_to_rss($urls, $timezone = 'Europe/Berlin') {
     $channel = $xml->createElement('channel');
     $rss->appendChild($channel);
     
-    // Get the actual request URL
-    $request_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . 
-                  "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    
     // Add required channel elements
     $channel->appendChild($xml->createElement('title', 'Calendar Feed'));
     $channel->appendChild($xml->createElement('description', 'Calendar events from CalDAV calendars'));
     
     // Create link element with text node
     $link = $xml->createElement('link');
-    $link->appendChild($xml->createTextNode($request_url));
+    $link->appendChild($xml->createTextNode($feed_url));
     $channel->appendChild($link);
     
     // Add atom:link for self-reference
     $atomLink = $xml->createElementNS('http://www.w3.org/2005/Atom', 'atom:link');
     $atomHref = $xml->createAttribute('href');
-    $atomHref->appendChild($xml->createTextNode($request_url));
+    $atomHref->appendChild($xml->createTextNode($feed_url));
     $atomLink->appendChild($atomHref);
     $atomLink->setAttribute('rel', 'self');
     $atomLink->setAttribute('type', 'application/rss+xml');

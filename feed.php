@@ -93,7 +93,13 @@ try {
         echo "<!-- No valid calendar URLs found for keys: " . implode(', ', $keys) . " -->\n";
         echo "<rss version=\"2.0\"><channel></channel></rss>";
     } else {
-        $feed = jcal_to_rss($urls, $timezone);
+        // Create feed URL from config base_url
+        $feed_url = $config['feed']['base_url'];
+        $feed_url = str_replace('{keys}', implode(',', $keys), $feed_url);
+        $feed_url = str_replace('{hours}', $hours, $feed_url);
+        $feed_url = str_replace('{timezone}', urlencode($timezone), $feed_url);
+        
+        $feed = jcal_to_rss($urls, $timezone, $feed_url);
         if (!empty($missing_keys)) {
             // Insert comment about missing keys after XML declaration
             $feed = preg_replace(
