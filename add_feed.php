@@ -51,6 +51,42 @@ if (json_last_error() !== JSON_ERROR_NONE) {
     throw new Exception('Error parsing config file');
 }
 $feed_base_url = $config['feed']['base_url'];
+
+// At the beginning of the file, add the status check handler
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['check']) && isset($_GET['key'])) {
+    try {
+        // Load config
+        $config = json_decode(file_get_contents(__DIR__ . '/config.json'), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception('Error parsing config file');
+        }
+
+        // Create database connection
+        $db = new PDO(
+            "mysql:host={$config['database']['host']};port={$config['database']['port']};dbname={$config['database']['name']};charset=utf8mb4",
+            $config['database']['user'],
+            $config['database']['password']
+        );
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        // Check if key exists and has a calendar_url
+        $stmt = $db->prepare("SELECT calendar_url FROM calendar_feeds WHERE feed_key = ?");
+        $stmt->execute([$_GET['key']]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Return JSON response
+        header('Content-Type: application/json');
+        echo json_encode([
+            'connected' => ($result && !empty($result['calendar_url']))
+        ]);
+        exit;
+    } catch (Exception $e) {
+        header('HTTP/1.1 500 Internal Server Error');
+        header('Content-Type: application/json');
+        echo json_encode(['error' => $e->getMessage()]);
+        exit;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -129,6 +165,21 @@ $feed_base_url = $config['feed']['base_url'];
             margin: 5px 0;
             color: #666;
         }
+        .status-indicator {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        .status-indicator.connected {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
     </style>
 </head>
 <body>
@@ -172,6 +223,9 @@ $feed_base_url = $config['feed']['base_url'];
                 <div id="urlExample" class="url-example">
                     <code></code>
                     <button onclick="copyUrl(this)" class="copy-button">URL kopieren</button>
+                </div>
+                <div id="connectionStatus" class="status-indicator">
+                    Warte auf Verbindung...
                 </div>
             </li>
         </ol>
@@ -268,6 +322,28 @@ $feed_base_url = $config['feed']['base_url'];
             document.getElementById('exampleLondon').textContent = formatUrl(key, null, 'Europe/London');
         }
         
+        function checkConnectionStatus(key) {
+            fetch(`${window.location.pathname}?check=1&key=${encodeURIComponent(key)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const statusElement = document.getElementById('connectionStatus');
+                    if (data.connected) {
+                        statusElement.textContent = 'Kalender erfolgreich verbunden!';
+                        statusElement.classList.add('connected');
+                        // Stop checking once connected
+                        if (window.statusCheckInterval) {
+                            clearInterval(window.statusCheckInterval);
+                        }
+                    } else {
+                        statusElement.textContent = 'Warte auf Verbindung...';
+                        statusElement.classList.remove('connected');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking status:', error);
+                });
+        }
+
         function generateKey() {
             fetch(window.location.pathname, {
                 method: 'POST',
@@ -290,6 +366,15 @@ $feed_base_url = $config['feed']['base_url'];
                     
                     // Update all examples with the new key
                     updateExamples(data.feed_key);
+
+                    // Start checking connection status
+                    checkConnectionStatus(data.feed_key);
+                    if (window.statusCheckInterval) {
+                        clearInterval(window.statusCheckInterval);
+                    }
+                    window.statusCheckInterval = setInterval(() => {
+                        checkConnectionStatus(data.feed_key);
+                    }, 10000); // Check every 10 seconds
                 }
             })
             .catch(error => {
