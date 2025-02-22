@@ -71,14 +71,6 @@ function jcal_to_rss($urls, $timezone = 'Europe/Berlin') {
         
         // Create description
         $description = [];
-        if (isset($properties['description'])) {
-            $description[] = $properties['description'];
-        }
-        
-        // Add location if available
-        if (isset($properties['location'])) {
-            $description[] = 'Ort: ' . $properties['location'];
-        }
         
         // Format date/time
         $start_time = $event['start_time'];
@@ -88,23 +80,34 @@ function jcal_to_rss($urls, $timezone = 'Europe/Berlin') {
             $end_time->setTimezone($tz);
         }
         
+        // Add time
         if ($end_time) {
             // Check if it's a full-day event
             if (strlen($properties['dtstart']) === 10) { // Format: YYYY-MM-DD
-                $description[] = 'Datum: ' . $start_time->format('d.m.Y');
+                $description[] = 'Ganztägig';
             } else {
                 $description[] = sprintf(
-                    'Zeit: %s - %s',
-                    $start_time->format('d.m.Y H:i'),
+                    '%s - %s',
+                    $start_time->format('H:i'),
                     $end_time->format('H:i')
                 );
             }
         } else {
-            $description[] = 'Zeit: ' . $start_time->format('d.m.Y H:i');
+            $description[] = $start_time->format('H:i');
+        }
+        
+        // Add location if available
+        if (isset($properties['location'])) {
+            $description[] = $properties['location'];
+        }
+        
+        // Add description if available
+        if (isset($properties['description'])) {
+            $description[] = $properties['description'];
         }
         
         // Add description to item
-        $item->appendChild($xml->createElement('description', htmlspecialchars(implode("\n", $description), ENT_XML1)));
+        $item->appendChild($xml->createElement('description', htmlspecialchars(implode(' / ', $description), ENT_XML1)));
         
         // Add guid - combine uid and last-modified to detect changes
         $guid_base = $properties['uid'] ?? uniqid('event-');
