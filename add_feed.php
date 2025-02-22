@@ -218,14 +218,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['check']) && isset($_GET
                     <li>Der Termin kann nach erfolgreicher Verbindung wieder gelöscht werden</li>
                 </ul>
             </li>
-            <li>Warten Sie einige Minuten, bis die Verbindung hergestellt wurde</li>
+            <li>Warten Sie einige Minuten, bis die Verbindung hergestellt wurde
+            <div id="connectionStatus" class="status-indicator">
+                    Warte auf Verbindung...
+            </div>
+            </li>
             <li>Der Feed ist dann unter folgender URL verfügbar:
                 <div id="urlExample" class="url-example">
                     <code></code>
                     <button onclick="copyUrl(this)" class="copy-button">URL kopieren</button>
-                </div>
-                <div id="connectionStatus" class="status-indicator">
-                    Warte auf Verbindung...
                 </div>
             </li>
         </ol>
