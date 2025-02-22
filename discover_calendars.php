@@ -131,18 +131,16 @@ function discover_calendars($config) {
     echo "\nDiscovery completed: Connected $discovered calendars\n";
 }
 
-// Example usage:
-if (php_sapi_name() === 'cli') {
-    try {
-        // Load config
-        $config = json_decode(file_get_contents(__DIR__ . '/config.json'), true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception('Error parsing config file: ' . json_last_error_msg());
-        }
-        
-        discover_calendars($config);
-        echo "Calendar discovery completed.\n";
-    } catch (Exception $e) {
-        echo "Error: " . $e->getMessage() . "\n";
+try {
+    // Load config
+    $config = json_decode(file_get_contents(__DIR__ . '/config.json'), true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception('Error parsing config file: ' . json_last_error_msg());
     }
-} 
+    
+    discover_calendars($config);
+    echo "Calendar discovery completed.\n";
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage() . "\n";
+}
+ 
