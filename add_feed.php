@@ -217,6 +217,31 @@ $feed_base_url = $config['feed']['base_url'];
         const baseUrl = <?= json_encode($feed_base_url) ?>;
         let currentKey = '';
         
+        function formatUrl(key, hours = null, timezone = null) {
+            let url = baseUrl;
+            
+            // Replace keys placeholder
+            url = url.replace('{keys}', key);
+            
+            // Replace hours placeholder if present and provided
+            if (url.includes('{hours}')) {
+                url = url.replace('{hours}', hours || 24);
+            } else if (hours) {
+                // Add hours parameter if not in template but provided
+                url += (url.includes('?') ? '&' : '?') + 'hours=' + hours;
+            }
+            
+            // Replace timezone placeholder if present and provided
+            if (url.includes('{timezone}')) {
+                url = url.replace('{timezone}', timezone ? encodeURIComponent(timezone) : 'Europe/Berlin');
+            } else if (timezone) {
+                // Add timezone parameter if not in template but provided
+                url += (url.includes('?') ? '&' : '?') + 'timezone=' + encodeURIComponent(timezone);
+            }
+            
+            return url;
+        }
+        
         function updateExamples(key) {
             currentKey = key;
             // Update key display in instructions
@@ -226,12 +251,12 @@ $feed_base_url = $config['feed']['base_url'];
             document.getElementById('instructions').style.display = 'block';
             
             // Update examples
-            document.getElementById('example24h').textContent = `${baseUrl}?keys=${key}`;
-            document.getElementById('example168h').textContent = `${baseUrl}?keys=${key}&hours=168`;
-            document.getElementById('example720h').textContent = `${baseUrl}?keys=${key}&hours=720`;
-            document.getElementById('exampleMulti').textContent = `${baseUrl}?keys=${key},WEITERER_SCHLÜSSEL`;
-            document.getElementById('exampleBerlin').textContent = `${baseUrl}?keys=${key}&timezone=${encodeURIComponent('Europe/Berlin')}`;
-            document.getElementById('exampleLondon').textContent = `${baseUrl}?keys=${key}&timezone=${encodeURIComponent('Europe/London')}`;
+            document.getElementById('example24h').textContent = formatUrl(key);
+            document.getElementById('example168h').textContent = formatUrl(key, 168);
+            document.getElementById('example720h').textContent = formatUrl(key, 720);
+            document.getElementById('exampleMulti').textContent = formatUrl(key + ',WEITERER_SCHLÜSSEL');
+            document.getElementById('exampleBerlin').textContent = formatUrl(key, null, 'Europe/Berlin');
+            document.getElementById('exampleLondon').textContent = formatUrl(key, null, 'Europe/London');
         }
         
         function generateKey() {

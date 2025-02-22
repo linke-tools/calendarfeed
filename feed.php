@@ -9,25 +9,23 @@ try {
         throw new Exception('Error parsing config file');
     }
 
-    // Get and validate parameters
-    if (!isset($_GET['keys'])) {
-        throw new Exception('Missing parameter: keys');
-    }
+    // Get and validate parameters from either query string or URL path
+    $keys = $_GET['keys'] ?? '';
+    $hours = $_GET['hours'] ?? 24;
+    $timezone = $_GET['timezone'] ?? $config['feed']['default_timezone'];
+
     
-    // Parse keys
-    $keys = array_filter(array_map('trim', explode(',', $_GET['keys'])));
+    // Validate keys
     if (empty($keys)) {
-        throw new Exception('No valid keys provided');
+        throw new Exception('Missing parameter: keys');
     }
 
     // Get and validate hours
-    $hours = isset($_GET['hours']) ? (int)$_GET['hours'] : 24;
     if ($hours <= 0 || $hours > $config['feed']['max_hours']) {
         throw new Exception("Hours must be between 1 and {$config['feed']['max_hours']}");
     }
 
     // Get and validate timezone
-    $timezone = isset($_GET['timezone']) ? urldecode($_GET['timezone']) : $config['feed']['default_timezone'];
     try {
         $tz = new DateTimeZone($timezone);
     } catch (Exception $e) {

@@ -9,7 +9,8 @@
     "feed": {
         "default_timezone": "Europe/Berlin",
         "max_hours": 8760,
-        "base_url": "https://example.com/feed.php"
+        "base_url": "https://example.com/feed.php?keys={keys}&hours={hours}&timezone={timezone}",
+        "url_format": true
     },
     "calendar_discovery": {
         "unused_key_expiry_minutes": 1440,
