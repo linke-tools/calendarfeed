@@ -383,7 +383,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['check']) && isset($_GET
         }
 
         function copyKey(button) {
-            const key = button.previousElementSibling.textContent;
+            const key = document.getElementById('keyDisplay').textContent;
             navigator.clipboard.writeText(key).then(() => {
                 const originalText = button.textContent;
                 button.textContent = 'Kopiert!';

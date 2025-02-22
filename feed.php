@@ -13,7 +13,9 @@ try {
     $keys = $_GET['keys'] ?? '';
     $hours = $_GET['hours'] ?? 24;
     $timezone = $_GET['timezone'] ?? $config['feed']['default_timezone'];
-
+    
+    // Parse keys into array
+    $keys = array_filter(array_map('trim', explode(',', $keys)));
     
     // Validate keys
     if (empty($keys)) {
