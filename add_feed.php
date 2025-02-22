@@ -74,6 +74,11 @@ $feed_base_url = $config['feed']['base_url'];
         .steps li {
             margin-bottom: 15px;
         }
+        .key-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
         .key-display {
             font-family: monospace;
             background: #f0f0f0;
@@ -81,6 +86,7 @@ $feed_base_url = $config['feed']['base_url'];
             border-radius: 4px;
             display: none;
             margin: 10px 0;
+            flex: 1;
         }
         button {
             background: #4CAF50;
@@ -137,7 +143,10 @@ $feed_base_url = $config['feed']['base_url'];
         <li>Klicken Sie auf den Button, um einen neuen Feed-Schlüssel zu generieren:
             <div>
                 <button onclick="generateKey()">Neuen Feed-Schlüssel generieren</button>
-                <div id="keyDisplay" class="key-display"></div>
+                <div class="key-container">
+                    <div id="keyDisplay" class="key-display"></div>
+                    <button onclick="copyKey(this)" class="copy-button" style="display: none">Schlüssel kopieren</button>
+                </div>
             </div>
         </li>
     </ol>
@@ -260,7 +269,6 @@ $feed_base_url = $config['feed']['base_url'];
         }
         
         function generateKey() {
-            // Use relative path to current page
             fetch(window.location.pathname, {
                 method: 'POST',
             })
@@ -273,6 +281,9 @@ $feed_base_url = $config['feed']['base_url'];
                     keyDisplay.textContent = data.feed_key;
                     keyDisplay.style.display = 'block';
                     
+                    // Show copy button
+                    keyDisplay.nextElementSibling.style.display = 'block';
+                    
                     // Update and show URL example
                     const urlExample = document.getElementById('urlExample');
                     urlExample.querySelector('code').textContent = formatUrl(data.feed_key);
@@ -283,6 +294,17 @@ $feed_base_url = $config['feed']['base_url'];
             })
             .catch(error => {
                 alert('Fehler beim Generieren des Schlüssels');
+            });
+        }
+
+        function copyKey(button) {
+            const key = button.previousElementSibling.textContent;
+            navigator.clipboard.writeText(key).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Kopiert!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
             });
         }
 
