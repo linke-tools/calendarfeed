@@ -21,6 +21,18 @@ function jcal_to_rss($urls, $timezone = 'Europe/Berlin') {
     $channel = $xml->createElement('channel');
     $rss->appendChild($channel);
     
+    // Add required channel elements
+    $channel->appendChild($xml->createElement('title', 'Calendar Feed'));
+    $channel->appendChild($xml->createElement('description', 'Calendar events from CalDAV calendars'));
+    $channel->appendChild($xml->createElement('link', htmlspecialchars($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'])));
+    
+    // Add atom:link for self-reference
+    $atomLink = $xml->createElementNS('http://www.w3.org/2005/Atom', 'atom:link');
+    $atomLink->setAttribute('href', htmlspecialchars($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']));
+    $atomLink->setAttribute('rel', 'self');
+    $atomLink->setAttribute('type', 'application/rss+xml');
+    $channel->appendChild($atomLink);
+    
     // Collect all events
     $all_events = [];
     
