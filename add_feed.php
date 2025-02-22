@@ -260,7 +260,8 @@ $feed_base_url = $config['feed']['base_url'];
         }
         
         function generateKey() {
-            fetch('add_feed.php', {
+            // Use relative path to current page
+            fetch(window.location.pathname, {
                 method: 'POST',
             })
             .then(response => response.json())
@@ -274,7 +275,7 @@ $feed_base_url = $config['feed']['base_url'];
                     
                     // Update and show URL example
                     const urlExample = document.getElementById('urlExample');
-                    urlExample.querySelector('code').textContent = `${baseUrl}?keys=${data.feed_key}`;
+                    urlExample.querySelector('code').textContent = formatUrl(data.feed_key);
                     
                     // Update all examples with the new key
                     updateExamples(data.feed_key);
