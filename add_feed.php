@@ -100,7 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['check']) && isset($_GET
             font-family: Arial, sans-serif;
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding-left: 2em;
+            padding-right:2em;
             line-height: 1.6;
         }
         .steps {
