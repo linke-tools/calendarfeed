@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="de">
+	<head>
+		<title>Die Linke: Bundescloud Kalender mit Webseite nutzen</title>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<meta name="robots" content="index,follow"/>
+		<meta name="description" content=""/>
+		<style>
+
+			figure {
+				display: inline-block;
+				background-color: #efefef;
+				text-align: center;
+				border-radius: 1em;
+				box-sizing: border-box;
+				padding:1em;
+			}
+
+			figcaption {
+				font-style: italic;
+				padding:1em;
+				padding-bottom: 0;
+			}
+			img {
+				max-width: 100%;
+				height: auto;
+			}
+
+			body {
+				text-align: center;
+				font-family: sans-serif;
+				margin: auto;
+				max-width: 52em;
+				width: 100%;
+				padding: 1em;
+				box-sizing: border-box;
+				margin-bottom: 1em;
+				hyphens: auto;
+			}
+
+			p, ul, table {
+				text-align: left;
+				font-size: 1.1em;
+			}
+
+			tr td:first-child  {
+				font-weight: bold;
+			}
+
+		</style>
+	</head>
+	<body>
+
+		<h1>Bundescloud Kalender mit Webseite nutzen</h1>
+
+		<p>Du bist bei der Linken für eure Webseite zuständig und möchtest gerne eine einfache Terminverwaltung realisieren? Dann könnte dieser kleine Dienst von Mitgliedern für Mitglieder für dich interessant sein. In ein paar Schritten wird es dir und einer von dir gewähten Gruppe (z.B. dem Ortsvorstand) möglich sein, Termine direkt auf euren Telefonen zu verwalten und diese auf eurer Webseite immer aktuell anzuzuzeigen.</p>
+
+		<h2>Wie funktioniert das?</h2>
+
+		<p>Als Basis nutzen wir einen von dir selbst verwalteten Kalender in der <a href="https://bundescloud.die-linke.de">Bundescloud</a>. Solltest du hierfür noch keine Account haben wende dich bitte an deinen Kreisverband um einen Zugang zu erhalten. In der Bundescloud kannst du dann, nachdem du dich dort eingeloggt hast über die Kalenderapp einen neuen Kalender anlegen.</p>
+
+		<h2>Neuen Kalender anlegen</h2>
+
+		<p>Melde dich mit deinem Account an der Bundescloud an und erstelle einen neuen Kalender.</p>
+
+		<figure>
+			<img src="bc_icons.png" />
+			<figcaption>Wähle die Kalender-App vom oberen Menü aus</figcaption>
+		</figure>
+		
+		<figure>
+			<img src="bc_newcalendar.png" />
+			<figcaption>Erstelle einen neuen Kalender</figcaption>
+		</figure>
+		
+		<figure>
+		<img src="bc_name_calendar.png" />
+		<figcaption>Vergib einen Namen für deinen neuen Kalender</figcaption>
+		</figure>
+		<p>Nachdem der Kalender angelegt wurde, kannst du diesen mit anderen Benutzern der Bundescloud teilen. Du kannst hierzu entweder einzelne Namen direkt auswählen oder zunächst ein Team erstellen und die Berechtigungen anschließend für das Team vergeben. Gehe hierzu zunächst in die "Kontakte"-App.</p>
+
+		<figure>
+		<img src="bc_icons_contacts.png" />
+		<figcaption>Wähle die Kalender-App vom oberen Menü aus</figcaption>
+		</figure>
+
+		<p>Lege nun ein neues Team an und füge alle Accounts hinzu, welche den Kalender verwalten sollen.</p>
+
+		<figure>
+		<img src="bc_newteam01.png" />
+		<figcaption>Erstelle ein neues Team</figcaption>
+		</figure>
+
+		<figure>
+		<img src="bc_newteam02.png" />
+		<figcaption>Vergib dem Team einen Namen</figcaption>
+		</figure>
+
+		<figure>
+		<img src="bc_newteam03.png" />
+		<figcaption>Füge deinem Team Mitglieder hinzu</figcaption>
+		</figure>
+
+		<p>Nun kannst du deinen Kalender mit deinem Team teilen. Klicke hierzu auf das Stiftsymbol neben dem Kalender. Vergebe Schreibberechtigung wenn die Mitglieder des Teams Termine im Kalender anlegen, löschen und editieren müssen. Füge den Benutzer "linke.tools" mit Leseberechtigung hinzu wenn du die Termine des Kalenders auf der Webseite anzeigen möchtest (siehe nächster Abschnitt).</p>
+
+		<figure>
+		<img src="bc_share_cal01.png" />
+		<figcaption>Teile den Kalender mit deinem Team oder einzelnen Accounts</figcaption>
+		</figure>
+
+		<figure>
+		<img src="bc_share_cal02.png" />
+		<figcaption>Du kannst sowohl Berechtigungen zum Schreiben als auch nur zum lesen vergeben.</figcaption>
+		</figure>
+
+
+		<h2>Kalender auf der Webseite einbinden</h2>
+
+		<p>Um die Termine des Kalenders auf der Webseite anzuzeigen, kann das RSS Feed Plugin von Typo3 (dem CMS der Linken) genutzt werden. Hierzu wird eine Feed-URL benötigt welche du über den folgenden Link erhalten kannst. Bitte durchlaufe den dort beschriebenen Prozess um den Feed-Link für deinen Kalender zu erhalten:</p>
+
+		<a href="https://calendarfeed.linke.tools/add">https://calendarfeed.linke.tools/add</a>
+
+		<p>Wenn du den Kalender erfolgreich verbunden hast, melde dich am Administrationsinterface der Webseite an und füge das RSS Feed Plugin an gewünschter Stelle hinzu.</p>
+
+		<figure>
+		<img src="bc_rss00.png" />
+		<figcaption>Wähle das RSS-Feed Plugin als Inhaltselement aus</figcaption>
+		</figure>
+
+
+		<figure>
+		<img src="bc_rss01.png" />
+		<figcaption>Lege Überschrift, Hintergrundfarbe und Piktogramm fest</figcaption>
+		</figure>
+
+		<p>Klicke nun oben auf "Plug-In" um die weiteren Einstellungen vorzunehmen.</p>
+
+		<figure>
+		<img src="bc_rss02.png" />
+		<figcaption>Füge deine Feed-URL als Adresse ein</figcaption>
+		</figure>
+
+
+		<figure>
+		<img src="bc_rss03.png" />
+		<figcaption>Übernehme diese Einstellungen in deine Konfiguration.</figcaption>
+		</figure>
+
+		<p>Speichere deine Änderungen und prüfe ob die Termine auf der Webseite korrekt angezeigt werden.</p>
+
+		<figure>
+		<img src="bc_rss04.png" />
+		<figcaption></figcaption>
+		</figure>
+
+
+		<h2>Sammelfeed für verschiedene Gliederungen</h2>
+
+		<p>Du kannst mehrere Kalender in einem Feed zusammenführen, indem du die Feed-Schlüssel durch Komma getrennt in der URL auflistest. Dies ermöglicht es zum Beispiel, die Termine aller Ortsvereine eines Kreisverbandes gesammelt in einer Übersicht anzuzeigen.</p>
+
+		<h2>Kalender mit dem Smartphone verbinden</h2>
+
+		<p>Im nächsten Schritt kannst du den Kalender auf deinem Smartphone verbinden und so Termine direkt von deinem Telefon auf die Webseite stellen. Da es sich bei der Bundescloud um eine Nextcloud Installation handelt welche die Kalender über das CalDAV Protokoll bereitstellt, kannst du hierzu die folgenden beiden Anleitungen für iOS und Android heranziehen. Der Kalender kann von jedem Teammitglied über den eigenen Bundescloud Account hinzugefügt werden.</p>
+
+		<h3>Verbindung mit iPhone</h3>
+
+		<p>Öffne deine Einstellugnen und navigiere ganz nach unten zu dem Punkt "Apps". Suche nach "Kalender" und gehe dann zu "Kalender-Accounts". Gehe auf "Account hinzufügen", dann auf "Andere". Anschließend auf "CalDAV-Account hinzufügen". Nutze die folgenden Daten um dich mit der Bundescloud zu verbinden.</p>
+
+		<table>
+			<tr><td>Server:</td><td>bundescloud.die-linke.de</td></tr>
+			<tr><td>Bneutzername:</td><td>Dein Bundescloud Benutzername</td></tr>
+			<tr><td>Passwort:</td><td>Dein Bundescloud Passwort</td></tr>
+		</table>
+
+		<p>Nach erfolgreicher Verbindung sollte der Kalender über deine Kalenderapp editierbar sein.</p>
+
+		<h3>Verbindung auf Android</h3>
+
+		<p>Eine Anleitung für die Verbindung der Kalenders auf einem Android Smarphone findest du hier:</p>
+
+		<ul>
+			<li><a href="https://docs.nextcloud.com/server/stable/user_manual/de/groupware/sync_android.html#contacts-and-calendar">https://docs.nextcloud.com/server/stable/user_manual/de/groupware/sync_android.html#contacts-and-calendar</a></li>
+		</ul>
+
+	</body>
+</html>
