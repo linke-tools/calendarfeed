@@ -77,6 +77,29 @@ function jcal_to_rss($urls, $timezone = 'Europe/Berlin', $feed_url = '') {
     });
     
     // Process sorted events
+    if (empty($all_events)) {
+        // Add placeholder item if no events found
+        $item = $xml->createElement('item');
+        
+        // Add title
+        $item->appendChild($xml->createElement('title', 'Keine Termine'));
+        
+        // Add description
+        $item->appendChild($xml->createElement('description', 'Derzeit liegen keine Termine vor.'));
+        
+        // Add guid
+        $guid = $xml->createElement('guid', 'no-events-' . date('Y-m-d'));
+        $guid->setAttribute('isPermaLink', 'false');
+        $item->appendChild($guid);
+        
+        // Add pubDate (current date without time)
+        $today = new DateTime('today', $tz);
+        $item->appendChild($xml->createElement('pubDate', $today->format(DateTime::RSS)));
+        
+        // Add item to channel
+        $channel->appendChild($item);
+    }
+    
     foreach ($all_events as $event) {
         $properties = $event['properties'];
         
