@@ -10,6 +10,7 @@
         "default_timezone": "Europe/Berlin",
         "max_hours": 8760,
         "base_url": "https://example.com/feed.php?keys={keys}&hours={hours}&timezone={timezone}",
+        "ical_base_url": "https://example.com/feed.php?keys={keys}&hours={hours}&timezone={timezone}&format=ical",
         "url_format": true
     },
     "calendar_discovery": {
