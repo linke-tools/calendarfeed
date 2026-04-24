@@ -1,6 +1,18 @@
 <?php
 
 require_once __DIR__ . '/jcal2rss.php';
+require_once __DIR__ . '/ical_utils.php';
+
+function build_feed_url($base_url, $keys, $hours, $timezone, $format = null) {
+    $url = str_replace('{keys}', implode(',', $keys), $base_url);
+    $url = str_replace('{hours}', $hours, $url);
+    $url = str_replace('{timezone}', urlencode($timezone), $url);
+    if ($format !== null && strpos($url, 'format=') === false) {
+        $separator = (strpos($url, '?') === false) ? '?' : '&';
+        $url .= $separator . 'format=' . urlencode($format);
+    }
+    return $url;
+}
 
 try {
     // Load config
@@ -13,6 +25,7 @@ try {
     $keys = $_GET['keys'] ?? '';
     $hours = $_GET['hours'] ?? 24;
     $timezone = $_GET['timezone'] ?? $config['feed']['default_timezone'];
+    $format = strtolower($_GET['format'] ?? 'rss');
     
     // Parse keys into array
     $keys = array_filter(array_map('trim', explode(',', $keys)));
@@ -25,6 +38,10 @@ try {
     // Get and validate hours
     if ($hours <= 0 || $hours > $config['feed']['max_hours']) {
         throw new Exception("Hours must be between 1 and {$config['feed']['max_hours']}");
+    }
+
+    if (!in_array($format, ['rss', 'ical'], true)) {
+        throw new Exception('Invalid parameter: format (allowed: rss, ical)');
     }
 
     // Get and validate timezone
@@ -73,43 +90,49 @@ try {
             }
             
             // Add export parameters
-            $urls[] = $auth_url . 
-                     (strpos($auth_url, '?') === false ? '?' : '&') . 
-                     "export&start=" . time() . 
-                     "&end=" . (time() + ($hours * 3600)) . 
-                     "&accept=jcal&expand=1";
+            $export_url = $auth_url .
+                        (strpos($auth_url, '?') === false ? '?' : '&') .
+                        "export&start=" . time() .
+                        "&end=" . (time() + ($hours * 3600));
+            if ($format === 'rss') {
+                $export_url .= "&accept=jcal&expand=1";
+            } else {
+                $export_url .= "&expand=1";
+            }
+            $urls[] = $export_url;
             
             $found_keys[] = $row['feed_key'];
         }
     }
     $missing_keys = array_diff($keys, $found_keys);
 
-    // Generate feed
-    header('Content-Type: application/rss+xml; charset=utf-8');
-    
-    if (empty($urls)) {
-        // If no valid URLs found, return empty feed with comment
-        echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-        echo "<!-- No valid calendar URLs found for keys: " . implode(', ', $keys) . " -->\n";
-        echo "<rss version=\"2.0\"><channel></channel></rss>";
+    if ($format === 'ical') {
+        header('Content-Type: text/calendar; charset=utf-8');
+        $ical_base_url = $config['feed']['ical_base_url'] ?? $config['feed']['base_url'];
+        $ical_feed_url = build_feed_url($ical_base_url, $keys, $hours, $timezone, 'ical');
+        $ical = build_ical_feed($urls, $ical_feed_url, $timezone);
+        echo $ical;
     } else {
-        // Create feed URL from config base_url
-        $feed_url = $config['feed']['base_url'];
-        $feed_url = str_replace('{keys}', implode(',', $keys), $feed_url);
-        $feed_url = str_replace('{hours}', $hours, $feed_url);
-        $feed_url = str_replace('{timezone}', urlencode($timezone), $feed_url);
-        
-        $feed = jcal_to_rss($urls, $timezone, $feed_url);
-        if (!empty($missing_keys)) {
-            // Insert comment about missing keys after XML declaration
-            $feed = preg_replace(
-                '/<\?xml.*?\?>\s*/s',
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!-- Missing keys: " . 
-                implode(', ', $missing_keys) . " -->\n",
-                $feed
-            );
+        header('Content-Type: application/rss+xml; charset=utf-8');
+        if (empty($urls)) {
+            // If no valid URLs found, return empty feed with comment
+            echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+            echo "<!-- No valid calendar URLs found for keys: " . implode(', ', $keys) . " -->\n";
+            echo "<rss version=\"2.0\"><channel></channel></rss>";
+        } else {
+            $feed_url = build_feed_url($config['feed']['base_url'], $keys, $hours, $timezone);
+            $feed = jcal_to_rss($urls, $timezone, $feed_url);
+            if (!empty($missing_keys)) {
+                // Insert comment about missing keys after XML declaration
+                $feed = preg_replace(
+                    '/<\?xml.*?\?>\s*/s',
+                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!-- Missing keys: " .
+                    implode(', ', $missing_keys) . " -->\n",
+                    $feed
+                );
+            }
+            echo $feed;
         }
-        echo $feed;
     }
 
 } catch (Exception $e) {

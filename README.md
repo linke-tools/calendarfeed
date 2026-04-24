@@ -1,6 +1,6 @@
 # Calendar Feed Generator
 
-A tool to generate RSS feeds from CalDAV calendars. Users can share their calendars and receive a personalized RSS feed URL.
+A tool to generate RSS and iCal feeds from CalDAV calendars. Users can share their calendars and receive a personalized feed URL.
 
 ## Features
 - Automatic calendar discovery
@@ -8,6 +8,7 @@ A tool to generate RSS feeds from CalDAV calendars. Users can share their calend
 - Configurable time ranges
 - Timezone support
 - Secure feed keys
+- RSS and iCal output formats
 
 ## Installation
 
@@ -64,10 +65,11 @@ Web interface for users to:
 - View usage examples
 
 ### feed.php
-RSS feed endpoint that accepts:
+Feed endpoint that accepts:
 - `keys`: Comma-separated list of feed keys
 - `hours`: Time range in hours (optional)
 - `timezone`: Timezone for event times (optional)
+- `format`: Output format (`rss` default, `ical` optional)
 
 ### discover_calendars.php
 Background script that:
@@ -98,11 +100,18 @@ The feed URL supports several parameters:
 - `keys`: Required. One or more feed keys (comma-separated)
 - `hours`: Optional. Number of hours to look ahead (default: 24)
 - `timezone`: Optional. Timezone for event times (default: from config)
+- `format`: Optional. `rss` (default) or `ical`
 
 Examples:
 ```
 https://example.com/feed.php?keys=abc123
 https://example.com/feed.php?keys=abc123,def456&hours=168&timezone=Europe%2FBerlin
+https://example.com/feed.php?keys=abc123&hours=168&timezone=Europe%2FBerlin&format=ical
+```
+
+For calendar subscriptions you can also use a `webcal://` URL with the same query parameters, e.g.:
+```
+webcal://example.com/feed.php?keys=abc123&hours=168&timezone=Europe%2FBerlin&format=ical
 ```
 
 ## Notes
@@ -110,3 +119,4 @@ https://example.com/feed.php?keys=abc123,def456&hours=168&timezone=Europe%2FBerl
 - Calendar discovery window is set to 24 hours to give users enough time to set up
 - Unused feed keys are automatically removed after 24 hours
 - Feed keys are automatically removed if the calendar is connected with a new key
+- iCal responses are generated from SabreDAV calendar export results within the requested `start`/`end` window
