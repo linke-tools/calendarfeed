@@ -270,6 +270,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['check']) && isset($_GET
                 <code id="exampleLondon"></code>
                 <button onclick="copyUrl(this)" class="copy-button">URL kopieren</button>
             </div>
+
+            <h3>Kalender abonnieren (iCal)</h3>
+            <p>Für ein Kalender-Abo können Sie den Feed im iCal-Format verwenden. Dazu wird der Parameter <code>format=ical</code> ergänzt.</p>
+            <div class="url-example">
+                <div class="example-description">Direkter iCal-Link:</div>
+                <code id="exampleIcal"></code>
+                <button onclick="copyUrl(this)" class="copy-button">URL kopieren</button>
+
+                <div class="example-description">Abo-Link für viele Kalender-Apps (webcal):</div>
+                <code id="exampleWebcal"></code>
+                <button onclick="copyUrl(this)" class="copy-button">URL kopieren</button>
+            </div>
         </div>
 
         <div class="note" style="margin-top: 20px;">
@@ -306,6 +318,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['check']) && isset($_GET
             
             return url;
         }
+
+        function formatIcalUrl(key, hours = null, timezone = null) {
+            let url = formatUrl(key, hours, timezone);
+            if (!url.includes('format=')) {
+                url += (url.includes('?') ? '&' : '?') + 'format=ical';
+            }
+            return url;
+        }
+
+        function toWebcalUrl(url) {
+            return url.replace(/^https?:\/\//i, 'webcal://');
+        }
         
         function updateExamples(key) {
             currentKey = key;
@@ -322,6 +346,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['check']) && isset($_GET
             document.getElementById('exampleMulti').textContent = formatUrl(key + ',WEITERER_SCHLÜSSEL');
             document.getElementById('exampleBerlin').textContent = formatUrl(key, null, 'Europe/Berlin');
             document.getElementById('exampleLondon').textContent = formatUrl(key, null, 'Europe/London');
+            document.getElementById('exampleIcal').textContent = formatIcalUrl(key, 168, 'Europe/Berlin');
+            document.getElementById('exampleWebcal').textContent = toWebcalUrl(formatIcalUrl(key, 168, 'Europe/Berlin'));
         }
         
         function checkConnectionStatus(key) {
