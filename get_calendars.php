@@ -1,12 +1,14 @@
 <?php
 
-function get_calendar_urls($base_url, $username, $password) {
+require_once __DIR__ . '/url_utils.php';
+
+function get_calendar_urls($calendar_base_url, $username, $password) {
     // Initialize cURL
     $ch = curl_init();
     
     // Set cURL options for PROPFIND request
     curl_setopt_array($ch, [
-        CURLOPT_URL => rtrim($base_url, '/') . '/calendars/' . $username,
+        CURLOPT_URL => rtrim($calendar_base_url, '/') . '/calendars/' . $username,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_CUSTOMREQUEST => 'PROPFIND',
         CURLOPT_HTTPHEADER => ['Depth: 1', 'Content-Type: application/xml'],
@@ -36,6 +38,11 @@ function get_calendar_urls($base_url, $username, $password) {
     
     // Initialize array for calendar URLs
     $calendars = [];
+
+    // webdav will return relative href to the origin while calendar_base_url
+    // might also contain a path element hence we need the real base base i.e.
+    // the origin
+    $base_url = getUrlPrefix($calendar_base_url);
     
     // Process each response element
     foreach ($xml->xpath('//d:response') as $response) {
@@ -53,7 +60,11 @@ function get_calendar_urls($base_url, $username, $password) {
                 $collection = trim(basename($href), '/');
                 
                 // Build calendar URL
-                $calendar_url = rtrim($base_url, '/') . $href;
+                if (isRelativeHref($href)) {
+                    $calendar_url = rtrim($base_url, '/') . $href;
+                } else {
+                    $calendar_url = $href;
+                }
                 
                 // Add to results
                 $calendars[] = [
@@ -68,3 +79,4 @@ function get_calendar_urls($base_url, $username, $password) {
     
     return $calendars;
 }
+
